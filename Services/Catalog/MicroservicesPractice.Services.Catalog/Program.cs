@@ -1,6 +1,8 @@
 using MicroservicesPractice.Services.Catalog.Services.Abstract;
 using MicroservicesPractice.Services.Catalog.Services.Concrete;
 using MicroservicesPractice.Services.Catalog.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Options;
 
 namespace MicroservicesPractice.Services.Catalog
@@ -13,7 +15,11 @@ namespace MicroservicesPractice.Services.Catalog
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(opt =>
+            {
+                opt.Filters.Add(new AuthorizeFilter());
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -26,6 +32,13 @@ namespace MicroservicesPractice.Services.Catalog
             builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
             builder.Services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
 
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.Authority = builder.Configuration["IdentityServerUrl"];
+                options.Audience = "resource_catalog";
+                options.RequireHttpsMetadata = false;
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -34,6 +47,8 @@ namespace MicroservicesPractice.Services.Catalog
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

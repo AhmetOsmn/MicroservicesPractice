@@ -26,9 +26,7 @@ services:
         - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
         ports:
             - "1433:1433"
-        volumes:
-            - mongodb_db:/data/db
-            - mongodb_configdb:/data/configdb
+
             
     basketdb:
         container_name: microservices-practice-basketdb 
@@ -60,6 +58,16 @@ services:
             - "5432:5432"
         volumes:
             - postgre_db:/var/lib/postgresql/data
+    
+    orderdb:
+        container_name: microservices-practice-orderdb
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=Password12*
+        - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        ports:
+            - "1443:1433"
             
 volumes:
   mongodb_db:

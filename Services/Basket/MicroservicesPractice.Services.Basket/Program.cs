@@ -20,10 +20,7 @@ namespace MicroservicesPractice.Services.Basket
 
             var requireAuthorizePolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 
-            builder.Services.AddControllers(opt =>
-            {
-                opt.Filters.Add(new AuthorizeFilter(requireAuthorizePolicy));
-            });
+            builder.Services.AddControllers(opt => opt.Filters.Add(new AuthorizeFilter(requireAuthorizePolicy)));
 
             // Add services to the container.
             builder.Services.AddHttpContextAccessor();

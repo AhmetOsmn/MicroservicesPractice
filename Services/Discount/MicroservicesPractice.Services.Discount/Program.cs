@@ -19,10 +19,7 @@ namespace MicroservicesPractice.Services.Discount
             var requireAuthorizePolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 
             // Add services to the container.
-            builder.Services.AddControllers(opt =>
-            {
-                opt.Filters.Add(new AuthorizeFilter(requireAuthorizePolicy));
-            });
+            builder.Services.AddControllers(opt => opt.Filters.Add(new AuthorizeFilter(requireAuthorizePolicy)));
 
             builder.Services.AddEndpointsApiExplorer();
 

@@ -43,7 +43,26 @@ services:
             - "6379:6379"
         volumes:
             - redis_db:/data
+    
+    discountdb:
+        container_name: microservices-practice-discountdb 
+        image: postgres:latest
+        environment:
+        - POSTGRES_USER=admin
+        - POSTGRES_PASSWORD=Password12*
+        - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/15/bin
+        - GOSU_VERSION=1.16
+        - LANG=en_US.utf8
+        - PG_MAJOR=15
+        - PG_VERSION=15.2-1.pgdg110+1
+        - PGDATA=/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgre_db:/var/lib/postgresql/data
+            
 volumes:
   mongodb_db:
   mongodb_configdb:
   redis_db:
+  postgre_db:

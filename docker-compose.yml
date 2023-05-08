@@ -1,6 +1,6 @@
 services:
-    mongodb:
-        container_name: microservices-practice-mongodb
+    catalogdb:
+        container_name: microservices-practice-catalogdb
         image: mongo:latest
         environment:
         - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -30,6 +30,20 @@ services:
             - mongodb_db:/data/db
             - mongodb_configdb:/data/configdb
             
+    basketdb:
+        container_name: microservices-practice-basketdb 
+        image: redis:latest
+        environment:
+        - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - GOSU_VERSION=1.16
+        - REDIS_VERSION=7.0.11
+        - REDIS_DOWNLOAD_URL=http://download.redis.io/releases/redis-7.0.11.tar.gz
+        - REDIS_DOWNLOAD_SHA=ce250d1fba042c613de38a15d40889b78f7cb6d5461a27e35017ba39b07221e3
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis_db:/data
 volumes:
   mongodb_db:
   mongodb_configdb:
+  redis_db:

@@ -14,7 +14,8 @@ namespace MicroservicesPractice.IdentityServer
             new ApiResource[]
             {
                 new ApiResource("resource_catalog"){Scopes={"catalog_fullpermission"}},
-                new ApiResource("photo_stock_catalog"){Scopes={"photo_stock_fullpermission"}},
+                new ApiResource("resource_photo_stock"){Scopes={"photo_stock_fullpermission"}},
+                new ApiResource("resource_basket"){Scopes={"basket_fullpermission"}},
                 new ApiResource(IdentityServerConstants.LocalApi.ScopeName),
             };
 
@@ -32,6 +33,7 @@ namespace MicroservicesPractice.IdentityServer
             {
                 new ApiScope("catalog_fullpermission","Catalog API icin full erisim."),
                 new ApiScope("photo_stock_fullpermission","Photo Stock API icin full erisim."),
+                new ApiScope("basket_fullpermission","Basket API icin full erisim."),
                 new ApiScope(IdentityServerConstants.LocalApi.ScopeName)
             };
 
@@ -65,6 +67,7 @@ namespace MicroservicesPractice.IdentityServer
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
                         IdentityServerConstants.LocalApi.ScopeName,
+                        "basket_fullpermission",
                         "roles"
                     },
                     AccessTokenLifetime = 1*60*60,

@@ -29,6 +29,8 @@ namespace MicroservicesPractice.Services.Order.Application.Handlers
 
             request.OrderItems.ForEach(x => newOrder.AddOrderItem(x.ProductId, x.ProductName, x.Price, x.PictureUrl));
 
+            await _context.Orders.AddAsync(newOrder);
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return Response<CreatedOrderDto>.Success(new CreatedOrderDto() { OrderId = newOrder.Id },200);

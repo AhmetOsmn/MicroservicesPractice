@@ -1,6 +1,13 @@
 
+using MediatR;
 using MicroservicesPractice.Services.Order.Infrastructure;
+using MicroservicesPractice.Shared.Services.Abstract;
+using MicroservicesPractice.Shared.Services.Concrete;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace MicroservicesPractice.Services.Order.API
 {
@@ -12,6 +19,8 @@ namespace MicroservicesPractice.Services.Order.API
 
             // Add services to the container.
 
+            var requireAuthorizePolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+
             builder.Services.AddDbContext<OrderDbContext>(opt =>
             {
                 opt.UseSqlServer(
@@ -19,10 +28,27 @@ namespace MicroservicesPractice.Services.Order.API
                     cfg => cfg.MigrationsAssembly("MicroservicesPractice.Services.Order.Infrastructure"));
             });
 
-            builder.Services.AddControllers();
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddScoped<ISharedIdentityService, SharedIdentityService>();
+
+            builder.Services.AddMediatR(typeof(Application.Handlers.CreateOrderCommandHandler).Assembly);
+
+            builder.Services.AddControllers(opt => opt.Filters.Add(new AuthorizeFilter(requireAuthorizePolicy)));
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+
             builder.Services.AddSwaggerGen();
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.Authority = builder.Configuration["IdentityServerUrl"];
+                options.Audience = "resource_order";
+                options.RequireHttpsMetadata = false;
+            });
 
             var app = builder.Build();
 
@@ -33,8 +59,9 @@ namespace MicroservicesPractice.Services.Order.API
                 app.UseSwaggerUI();
             }
 
-            app.UseAuthorization();
+            app.UseAuthentication();
 
+            app.UseAuthorization();
 
             app.MapControllers();
 

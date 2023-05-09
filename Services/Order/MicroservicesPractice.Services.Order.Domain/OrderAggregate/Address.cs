@@ -13,13 +13,11 @@ namespace MicroservicesPractice.Services.Order.Domain.OrderAggregate
             Line = line;
         }
 
-        public Address() { }
-
-        public string Province { get; }
-        public string District { get; }
-        public string Street { get; }
-        public string ZipCode { get; }
-        public string Line { get; }
+        public string Province { get; private set; }
+        public string District { get; private set; }
+        public string Street { get; private set; }
+        public string ZipCode { get; private set; }
+        public string Line { get; private set; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {

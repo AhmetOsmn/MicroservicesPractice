@@ -1,7 +1,6 @@
 ﻿using MicroservicesPractice.Services.Catalog.Dtos;
 using MicroservicesPractice.Services.Catalog.Services.Abstract;
 using MicroservicesPractice.Shared.ControllerBases;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroservicesPractice.Services.Catalog.Controllers

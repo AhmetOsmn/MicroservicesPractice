@@ -29,7 +29,7 @@ namespace MicroservicesPractice.Services.PhotoStock.Controllers
             return CreateActionResultInstance(Response<PhotoDto>.Success(photoDto, 200));
         }
 
-        [HttpGet]
+        [HttpDelete]
         public IActionResult PhotoDelete(string photoUrl)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/photos", photoUrl);

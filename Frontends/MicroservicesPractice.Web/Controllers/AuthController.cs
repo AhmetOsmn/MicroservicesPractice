@@ -1,5 +1,7 @@
 ﻿using MicroservicesPractice.Web.Models;
 using MicroservicesPractice.Web.Services.Abstract;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroservicesPractice.Web.Controllers
@@ -31,9 +33,18 @@ namespace MicroservicesPractice.Web.Controllers
             if (!response.IsSuccessful)
             {
                 response.Errors.ForEach(error => ModelState.AddModelError(String.Empty, error));
+
+                return View();
             }
             
             return RedirectToAction(nameof(Index),"Home");
+        }
+
+        public async Task<IActionResult> SignOut(SignInInput signInInput)
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await _identityService.RevokeRefreshToken();
+            return RedirectToAction(nameof(HomeController.Index),"Home");
         }
     }
 }

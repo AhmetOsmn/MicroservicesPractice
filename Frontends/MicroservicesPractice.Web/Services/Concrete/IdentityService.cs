@@ -32,32 +32,72 @@ namespace MicroservicesPractice.Web.Services.Concrete
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Task<TokenResponse> GetAccessTokenByRefreshToken()
+        public async Task<TokenResponse?> GetAccessTokenByRefreshToken()
         {
-            throw new NotImplementedException();
+            DiscoveryDocumentResponse discovery = await CheckDisco();
+
+            var refreshToken = await _httpContextAccessor.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+
+            var refreshTokenRequest = new RefreshTokenRequest()
+            {
+                ClientId = _clientSettings.WebClientForUser.ClientId,
+                ClientSecret = _clientSettings.WebClientForUser.ClientSecret,
+                RefreshToken = refreshToken,
+                Address = discovery.TokenEndpoint
+            };
+
+            var token = await _httpClient.RequestRefreshTokenAsync(refreshTokenRequest);
+
+            if (token.IsError)
+            {
+                return null;
+            }
+
+            var authenticationTokens = new List<AuthenticationToken>()
+            {
+                new AuthenticationToken { Name = OpenIdConnectParameterNames.AccessToken, Value = token.AccessToken! },
+                new AuthenticationToken { Name = OpenIdConnectParameterNames.RefreshToken, Value = token.RefreshToken! },
+                new AuthenticationToken { Name = OpenIdConnectParameterNames.ExpiresIn, Value = DateTime.Now.AddSeconds(token.ExpiresIn).ToString("o", CultureInfo.InvariantCulture) }
+            };
+
+            var authenticationResult = await _httpContextAccessor.HttpContext.AuthenticateAsync();
+            var properties = authenticationResult.Properties;
+
+            ObjectHelper.ObjectNullCheck(properties, nameof(properties));
+
+            properties!.StoreTokens(authenticationTokens);
+
+            await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, authenticationResult.Principal, properties);
+
+            return token;
         }
 
-        public Task RevokeRefreshToken()
+        public async Task RevokeRefreshToken()
         {
-            throw new NotImplementedException();
+            var discovery = await CheckDisco();
+
+            var refreshToken = await _httpContextAccessor.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+
+            TokenRevocationRequest tokenRevocationRequest = new()
+            {
+                ClientId = _clientSettings.WebClientForUser.ClientId,
+                ClientSecret = _clientSettings.WebClientForUser.ClientSecret,
+                Address = discovery.RevocationEndpoint,
+                Token = refreshToken,
+                TokenTypeHint = "refresh_token"
+            };
+
+            await _httpClient.RevokeTokenAsync(tokenRevocationRequest);
         }
 
         public async Task<Response<bool>> SignIn(SignInInput signInInput)
         {
-            var discovery = await _httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
-            {
-                Address = _serviceApiSettings.BaseUri,
-                Policy = new DiscoveryPolicy { RequireHttps = false }
-            });
-
-            ObjectHelper.ObjectNullCheck(discovery, nameof(discovery));
-
-            if (discovery.IsError) throw discovery.Exception!;
+            var discovery = await CheckDisco();
 
             var passwordTokenRequest = new PasswordTokenRequest
             {
                 ClientId = _clientSettings.WebClientForUser.ClientId,
-                ClientSecret = _clientSettings.WebClientForUser.Secret,
+                ClientSecret = _clientSettings.WebClientForUser.ClientSecret,
                 UserName = signInInput.Email,
                 Password = signInInput.Password,
                 Address = discovery.TokenEndpoint
@@ -113,6 +153,20 @@ namespace MicroservicesPractice.Web.Services.Concrete
             await _httpContextAccessor.HttpContext!.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, authenticationProperties);
 
             return Response<bool>.Success(200);
+        }
+
+        private async Task<DiscoveryDocumentResponse> CheckDisco()
+        {
+            var discovery = await _httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
+            {
+                Address = _serviceApiSettings.IdentityBaseUri,
+                Policy = new DiscoveryPolicy { RequireHttps = false }
+            });
+
+            ObjectHelper.ObjectNullCheck(discovery, nameof(discovery));
+
+            if (discovery.IsError) throw discovery.Exception!;
+            return discovery;
         }
     }
 }

@@ -2,13 +2,13 @@
 {
     public class ClientSettings
     {
-        public Client WebClient { get; set; } = null!;
-        public Client WebClientForUser { get; set; } = null!;
+        public Client WebClient { get; set; }
+        public Client WebClientForUser { get; set; }
     }
 
     public class Client
     {
-        public string ClientId { get; set; } = null!;
-        public string Secret { get; set; } = null!;
+        public string ClientId { get; set; }
+        public string ClientSecret { get; set; }
     }
 }

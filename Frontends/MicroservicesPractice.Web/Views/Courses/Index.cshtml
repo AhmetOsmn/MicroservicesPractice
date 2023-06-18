@@ -8,7 +8,8 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Kurslar</h5>
-                @if(Model.Any())
+                <a class="btn btn-success mb-3" asp-controller="Courses" asp-action="Create">Kurs Ekle</a>
+                @if (Model.Any())
                 {
                     <table class="table table-striped table-bordered">
                         <thead>

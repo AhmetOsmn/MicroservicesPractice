@@ -22,7 +22,7 @@ namespace MicroservicesPractice.Services.PhotoStock.Controllers
             using FileStream stream = new(path, FileMode.Create);
             await photo.CopyToAsync(stream, cancellationToken);
 
-            var returnPath = $"photos/{photo.FileName}";
+            var returnPath = photo.FileName;
 
             PhotoDto photoDto = new() { Url = returnPath };
 

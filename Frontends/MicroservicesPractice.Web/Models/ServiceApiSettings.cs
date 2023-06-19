@@ -6,6 +6,7 @@
         public string GatewayBaseUri { get; set; } = null!;
         public string PhotoStockUri { get; set; } = null!;
         public ServiceApi Catalog { get; set; } = null!;
+        public ServiceApi PhotoStock { get; set; } = null!;
     }
 
     public class ServiceApi

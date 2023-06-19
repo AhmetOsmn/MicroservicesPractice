@@ -1,4 +1,5 @@
 ﻿using MicroservicesPractice.Shared.Dtos;
+using MicroservicesPractice.Web.Helpers;
 using MicroservicesPractice.Web.Models.Catalogs;
 using MicroservicesPractice.Web.Services.Abstract;
 
@@ -7,14 +8,25 @@ namespace MicroservicesPractice.Web.Services.Concrete
     public class CatalogService : ICatalogService
     {
         private readonly HttpClient _httpClient;
+        private readonly IPhotoStockService _photoStockService;
+        private readonly PhotoHelper _photoHelper;
 
-        public CatalogService(HttpClient httpClient)
+        public CatalogService(HttpClient httpClient, IPhotoStockService photoStockService, PhotoHelper photoHelper)
         {
             _httpClient = httpClient;
+            _photoStockService = photoStockService;
+            _photoHelper = photoHelper;
         }
 
         public async Task<bool> CreateCourseAsync(CourseCreateInput courseCreateInput)
         {
+            var resultPhotoService = await _photoStockService.UploadPhoto(courseCreateInput.PhotoFormFile);
+
+            if (resultPhotoService != null)
+            {
+                courseCreateInput.Picture = resultPhotoService.Url;
+            }
+
             var response = await _httpClient.PostAsJsonAsync<CourseCreateInput>("courses", courseCreateInput);
 
             return response.IsSuccessStatusCode;
@@ -45,12 +57,18 @@ namespace MicroservicesPractice.Web.Services.Concrete
             //http://localhost:5000/services/catalog/courses
             var response = await _httpClient.GetAsync("courses");
 
-            if(!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 return null;
             }
 
             var responseSuccess = await response.Content.ReadFromJsonAsync<Response<List<CourseViewModel>>>();
+
+            responseSuccess.Data.ForEach(x =>
+            {
+                x.Picture = _photoHelper.GetPhotoStockUrl(x.Picture);
+            });
+
             return responseSuccess.Data;
         }
 
@@ -65,6 +83,12 @@ namespace MicroservicesPractice.Web.Services.Concrete
             }
 
             var responseSuccess = await response.Content.ReadFromJsonAsync<Response<List<CourseViewModel>>>();
+
+            responseSuccess.Data.ForEach(x =>
+            {
+                x.Picture = _photoHelper.GetPhotoStockUrl(x.Picture);
+            });
+
             return responseSuccess.Data;
         }
 
@@ -83,6 +107,17 @@ namespace MicroservicesPractice.Web.Services.Concrete
 
         public async Task<bool> UpdateCourseAsync(CourseUpdateInput courseUpdateInput)
         {
+            if(courseUpdateInput.PhotoFormFile != null)
+            {
+                var resultPhotoService = await _photoStockService.UploadPhoto(courseUpdateInput.PhotoFormFile);
+
+                if (resultPhotoService != null)
+                {
+                    await _photoStockService.DeletePhoto(courseUpdateInput.Picture);
+                    courseUpdateInput.Picture = resultPhotoService.Url;
+                }
+            }           
+
             var response = await _httpClient.PutAsJsonAsync<CourseUpdateInput>("courses", courseUpdateInput);
 
             return response.IsSuccessStatusCode;

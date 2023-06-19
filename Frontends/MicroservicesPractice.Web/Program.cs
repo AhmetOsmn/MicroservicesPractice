@@ -1,6 +1,7 @@
 using MicroservicesPractice.Shared.Services.Abstract;
 using MicroservicesPractice.Shared.Services.Concrete;
 using MicroservicesPractice.Web.Handler;
+using MicroservicesPractice.Web.Helpers;
 using MicroservicesPractice.Web.Models;
 using MicroservicesPractice.Web.Services.Abstract;
 using MicroservicesPractice.Web.Services.Concrete;
@@ -15,6 +16,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.Configure<ServiceApiSettings>(builder.Configuration.GetSection("ServiceApiSettings"));
 builder.Services.Configure<ClientSettings>(builder.Configuration.GetSection("ClientSettings"));
 
+builder.Services.AddSingleton<PhotoHelper>();
 builder.Services.AddScoped<ResourceOwnerPasswordTokenHandler>();
 builder.Services.AddScoped<ClientCredentialTokenHandler>();
 builder.Services.AddScoped<ISharedIdentityService, SharedIdentityService>();
@@ -24,6 +26,10 @@ builder.Services.AddHttpClient<IClientCredentialTokenService, ClientCredentialTo
 builder.Services.AddHttpClient<ICatalogService, CatalogService>(opt =>
 {
     opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.Catalog.Path}");
+}).AddHttpMessageHandler<ClientCredentialTokenHandler>();
+builder.Services.AddHttpClient<IPhotoStockService, PhotoStockService>(opt =>
+{
+    opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.PhotoStock.Path}");
 }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
 builder.Services.AddHttpClient<IUserService, UserService>(opt =>
 {

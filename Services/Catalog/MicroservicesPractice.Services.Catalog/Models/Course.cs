@@ -22,7 +22,7 @@ namespace MicroservicesPractice.Services.Catalog.Models
         public Category Category { get; set; } = null!;
 
         public string Name { get; set; } = null!;
-        public string Picture { get; set; } = null!;
+        public string? Picture { get; set; }
         public string Description { get; set; } = null!;
         public string UserId { get; set; } = null!;
         public Feature Feature { get; set; } = null!;

@@ -25,5 +25,8 @@ namespace MicroservicesPractice.Web.Models.Catalogs
         [Display(Name = "Kurs kategori")]
         [Required]
         public string CategoryId { get; set; }
+
+        [Display(Name="Kurs Resim")]
+        public IFormFile? PhotoFormFile { get; set; }
     }
 }

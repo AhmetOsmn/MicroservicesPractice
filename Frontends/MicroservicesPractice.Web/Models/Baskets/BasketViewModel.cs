@@ -2,6 +2,11 @@
 {
     public class BasketViewModel
     {
+        public BasketViewModel()
+        {
+            _basketItems = new List<BasketItemViewModel>();
+        }
+
         public string UserId { get; set; } = null!;
         public string DiscountCode { get; set; } = null!;
         private List<BasketItemViewModel>? _basketItems { get; set; }

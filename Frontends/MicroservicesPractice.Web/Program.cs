@@ -4,8 +4,6 @@ using MicroservicesPractice.Web.Extensions;
 using MicroservicesPractice.Web.Handler;
 using MicroservicesPractice.Web.Helpers;
 using MicroservicesPractice.Web.Models;
-using MicroservicesPractice.Web.Services.Abstract;
-using MicroservicesPractice.Web.Services.Concrete;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);

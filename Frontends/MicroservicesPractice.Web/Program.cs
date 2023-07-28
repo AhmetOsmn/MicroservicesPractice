@@ -1,15 +1,19 @@
+using FluentValidation;
 using MicroservicesPractice.Shared.Services.Abstract;
 using MicroservicesPractice.Shared.Services.Concrete;
 using MicroservicesPractice.Web.Extensions;
 using MicroservicesPractice.Web.Handler;
 using MicroservicesPractice.Web.Helpers;
 using MicroservicesPractice.Web.Models;
+using MicroservicesPractice.Web.Validators;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CourseCreateInputValidator>();
 
 builder.Services.Configure<ServiceApiSettings>(builder.Configuration.GetSection("ServiceApiSettings"));
 builder.Services.Configure<ClientSettings>(builder.Configuration.GetSection("ClientSettings"));
@@ -35,10 +39,9 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseDeveloperExceptionPage();
 }
 else
 {

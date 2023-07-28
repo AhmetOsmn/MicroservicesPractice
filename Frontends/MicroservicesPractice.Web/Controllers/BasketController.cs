@@ -1,9 +1,11 @@
 ﻿using MicroservicesPractice.Web.Models.Baskets;
 using MicroservicesPractice.Web.Services.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroservicesPractice.Web.Controllers
 {
+    [Authorize]
     public class BasketController : Controller
     {
         private readonly ICatalogService _catalogService;

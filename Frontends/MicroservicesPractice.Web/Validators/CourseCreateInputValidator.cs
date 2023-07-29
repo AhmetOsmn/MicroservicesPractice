@@ -13,7 +13,7 @@ namespace MicroservicesPractice.Web.Validators
             RuleFor(x => x.CategoryId).NotEmpty().WithMessage("Kategori seçiniz.");
 
             // , den sonra 2 karakter olabilir ve toplamda 6 karakter olabilir.
-            RuleFor(x => x.Price).NotEmpty().WithMessage("Fiyat alanı boş olamaz.").ScalePrecision(2,6).WithMessage("Hatalı para formatı.");
+            RuleFor(x => x.Price).NotEmpty().WithMessage("Fiyat alanı boş olamaz.").PrecisionScale(6, 2, false).WithMessage("Hatalı para formatı.");
         }
     }
 }

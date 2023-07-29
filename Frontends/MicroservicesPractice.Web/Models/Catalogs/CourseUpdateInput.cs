@@ -8,10 +8,10 @@ namespace MicroservicesPractice.Web.Models.Catalogs
         public string Id { get; set; } = null!;
 
         [Display(Name = "Kurs ismi")]
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; }
 
         [Display(Name = "Açıklama")]        
-        public string Description { get; set; } = null!;
+        public string? Description { get; set; }
 
         public string? Picture { get; set; }
 

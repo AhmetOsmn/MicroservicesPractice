@@ -7,9 +7,12 @@
             _basketItems = new List<BasketItemViewModel>();
         }
 
+        private List<BasketItemViewModel>? _basketItems;
+        
         public string UserId { get; set; } = null!;
-        public string DiscountCode { get; set; } = null!;
-        private List<BasketItemViewModel>? _basketItems { get; set; }
+        
+        public string? DiscountCode { get; set; }
+        
         public List<BasketItemViewModel>? BasketItems
         {
             get
@@ -39,6 +42,18 @@
             get => _basketItems == null ? 0 : _basketItems.Sum(x => x.GetCurrentPrice);
         }
 
-        public bool HasDiscount { get => !string.IsNullOrEmpty(DiscountCode); }
+        public bool HasDiscount { get => !string.IsNullOrEmpty(DiscountCode) && DiscountRate.HasValue; }
+
+        public void CancelDiscount()
+        {
+            DiscountCode = null;
+            DiscountRate = null;
+        }
+
+        public void ApplyDiscount(string code, int rate)
+        {
+            DiscountCode = code;
+            DiscountRate = rate;
+        }
     }
 }

@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using MicroservicesPractice.Shared.Services.Abstract;
 using MicroservicesPractice.Shared.Services.Concrete;
 using MicroservicesPractice.Web.Extensions;
@@ -12,8 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddValidatorsFromAssemblyContaining<CourseCreateInputValidator>();
 
 builder.Services.Configure<ServiceApiSettings>(builder.Configuration.GetSection("ServiceApiSettings"));
 builder.Services.Configure<ClientSettings>(builder.Configuration.GetSection("ClientSettings"));
@@ -36,6 +35,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAccessTokenManagement();
 
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<CourseCreateInputValidator>();
 
 var app = builder.Build();
 

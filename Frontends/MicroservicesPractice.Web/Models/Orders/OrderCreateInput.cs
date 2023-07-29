@@ -6,8 +6,8 @@
         {
             OrderItems = new();
         }
-        public string BuyerId { get; set; } = null!;
+        public string BuyerId { get; set; } 
         public List<OrderItemCreateInput> OrderItems { get; set; }
-        public AddressCreateInput Address { get; set; } = null!;
+        public AddressCreateInput Address { get; set; } 
     }
 }

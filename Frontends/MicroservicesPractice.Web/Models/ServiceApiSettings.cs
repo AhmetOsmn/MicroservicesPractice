@@ -2,15 +2,15 @@
 {
     public class ServiceApiSettings
     {
-        public string IdentityBaseUri { get; set; } = null!;
-        public string GatewayBaseUri { get; set; } = null!;
-        public string PhotoStockUri { get; set; } = null!;
-        public ServiceApi Catalog { get; set; } = null!;
-        public ServiceApi PhotoStock { get; set; } = null!;
-        public ServiceApi Basket { get; set; } = null!;
-        public ServiceApi Discount { get; set; } = null!;
-        public ServiceApi Payment { get; set; } = null!;
-        public ServiceApi Order { get; set; } = null!;
+        public string IdentityBaseUri { get; set; } 
+        public string GatewayBaseUri { get; set; } 
+        public string PhotoStockUri { get; set; } 
+        public ServiceApi Catalog { get; set; } 
+        public ServiceApi PhotoStock { get; set; } 
+        public ServiceApi Basket { get; set; } 
+        public ServiceApi Discount { get; set; } 
+        public ServiceApi Payment { get; set; } 
+        public ServiceApi Order { get; set; } 
     }
 
     public class ServiceApi

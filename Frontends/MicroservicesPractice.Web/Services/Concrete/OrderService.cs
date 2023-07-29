@@ -125,6 +125,8 @@ namespace MicroservicesPractice.Web.Services.Concrete
 
             if (!responsePayment) return new OrderSuspendViewModel() { ErrorMessage = "Ödeme alınamadı.", IsSuccessful = false };
 
+            await _basketService.Delete();
+
             return new OrderSuspendViewModel() { IsSuccessful = true };
         }
     }

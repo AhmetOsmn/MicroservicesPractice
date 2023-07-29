@@ -1,5 +1,7 @@
 
+using MassTransit;
 using MediatR;
+using MicroservicesPractice.Services.Order.Application.Consumers;
 using MicroservicesPractice.Services.Order.Infrastructure;
 using MicroservicesPractice.Shared.Services.Abstract;
 using MicroservicesPractice.Shared.Services.Concrete;
@@ -40,6 +42,26 @@ namespace MicroservicesPractice.Services.Order.API
             builder.Services.AddEndpointsApiExplorer();
 
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddMassTransit(x =>
+            {
+                x.AddConsumer<CreateOrderMessageCommandConsumer>();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    // Default RMQ port: 5672
+                    cfg.Host(builder.Configuration["RabbitMQUrl"], "/", host =>
+                    {
+                        host.Username("guest");
+                        host.Password("guest");
+                    });
+
+                    cfg.ReceiveEndpoint("create-order-service", e =>
+                    {
+                        e.ConfigureConsumer<CreateOrderMessageCommandConsumer>(context);
+                    });
+                });
+            });
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 

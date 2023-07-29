@@ -9,7 +9,7 @@
 
         private List<BasketItemViewModel> _basketItems;
         
-        public string UserId { get; set; } = null!;
+        public string? UserId { get; set; }
         
         public string? DiscountCode { get; set; }
         

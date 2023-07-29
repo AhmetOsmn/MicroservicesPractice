@@ -6,6 +6,6 @@ namespace MicroservicesPractice.Services.Order.Application.Queries
 {
     public class GetOrdersByUserIdQuery : IRequest<Response<List<OrderDto>>>
     {
-        public string UserId { get; set; } = null!;
+        public string UserId { get; set; } 
     }
 }

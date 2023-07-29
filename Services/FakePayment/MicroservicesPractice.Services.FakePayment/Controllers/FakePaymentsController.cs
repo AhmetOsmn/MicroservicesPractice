@@ -30,6 +30,7 @@ namespace MicroservicesPractice.Services.FakePayment.Controllers
             createOrderMessageCommand.District = paymentDto.Order.Address.District;
             createOrderMessageCommand.Street = paymentDto.Order.Address.Street;
             createOrderMessageCommand.Line = paymentDto.Order.Address.Line;
+            createOrderMessageCommand.ZipCode = paymentDto.Order.Address.ZipCode;
 
             paymentDto.Order.OrderItems.ForEach(x =>
             {

@@ -2,9 +2,9 @@
 {
     public class OrderItemViewModel
     {
-        public string ProductId { get; set; } = null!;
-        public string ProductName { get; set; } = null!;
-        public string PictureUrl { get; set; } = null!;
+        public string ProductId { get; set; } 
+        public string ProductName { get; set; } 
+        public string PictureUrl { get; set; } 
         public decimal Price { get; set; }
     }
 }

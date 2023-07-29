@@ -7,7 +7,7 @@ namespace MicroservicesPractice.Services.Catalog.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = null!;
+        public string Id { get; set; } 
 
         [BsonRepresentation(BsonType.Decimal128)]
         public Decimal Price { get; set; }
@@ -16,15 +16,15 @@ namespace MicroservicesPractice.Services.Catalog.Models
         public DateTime CreatedTime { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]
-        public string CategoryId { get; set; } = null!;
+        public string CategoryId { get; set; } 
 
         [BsonIgnore]
-        public Category Category { get; set; } = null!;
+        public Category Category { get; set; } 
 
-        public string Name { get; set; } = null!;
+        public string Name { get; set; } 
         public string? Picture { get; set; }
-        public string Description { get; set; } = null!;
-        public string UserId { get; set; } = null!;
-        public Feature Feature { get; set; } = null!;
+        public string Description { get; set; } 
+        public string UserId { get; set; } 
+        public Feature Feature { get; set; } 
     }
 }

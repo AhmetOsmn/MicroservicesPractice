@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public DateTime CreatedDate { get; set; }
-        public string BuyerId { get; set; } = null!;
-        public List<OrderItemViewModel> OrderItems { get; set; } = null!;
+        public string BuyerId { get; set; } 
+        public List<OrderItemViewModel> OrderItems { get; set; } 
     }
 }

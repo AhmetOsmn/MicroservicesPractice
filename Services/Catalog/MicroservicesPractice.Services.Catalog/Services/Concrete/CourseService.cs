@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Mass = MassTransit;
 using MicroservicesPractice.Services.Catalog.Dtos;
 using MicroservicesPractice.Services.Catalog.Models;
 using MicroservicesPractice.Services.Catalog.Services.Abstract;
 using MicroservicesPractice.Services.Catalog.Settings;
 using MicroservicesPractice.Shared.Dtos;
 using MongoDB.Driver;
+using MicroservicesPractice.Shared.Messages;
 
 namespace MicroservicesPractice.Services.Catalog.Services.Concrete
 {
@@ -12,9 +14,10 @@ namespace MicroservicesPractice.Services.Catalog.Services.Concrete
     {
         private readonly IMongoCollection<Course> _courseCollection;
         private readonly IMongoCollection<Category> _categoryCollection;
+        private readonly Mass.IPublishEndpoint _publishEndpoint;
         private readonly IMapper _mapper;
 
-        public CourseService(IMapper mapper, IDatabaseSettings databaseSettings)
+        public CourseService(IMapper mapper, IDatabaseSettings databaseSettings, Mass.IPublishEndpoint publishEndpoint)
         {
             MongoClient client = new(databaseSettings.ConnectionString);
             var database = client.GetDatabase(databaseSettings.DatabaseName);
@@ -22,6 +25,7 @@ namespace MicroservicesPractice.Services.Catalog.Services.Concrete
             _courseCollection = database.GetCollection<Course>(databaseSettings.CourseCollectionName);
             _categoryCollection = database.GetCollection<Category>(databaseSettings.CategoryCollectionName);
             _mapper = mapper;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<Response<List<CourseDto>>> GetAllAsync()
@@ -40,7 +44,7 @@ namespace MicroservicesPractice.Services.Catalog.Services.Concrete
                 courses = new();
             }
 
-            return Response<List<CourseDto>>.Success(_mapper.Map<List<CourseDto>>(courses), 200);
+            return Shared.Dtos.Response<List<CourseDto>>.Success(_mapper.Map<List<CourseDto>>(courses), 200);
         }
 
         public async Task<Response<CourseDto>> GetByIdAsync(string id)
@@ -49,12 +53,12 @@ namespace MicroservicesPractice.Services.Catalog.Services.Concrete
 
             if (course == null)
             {
-                return Response<CourseDto>.Fail("Course not found", 404);
+                return Shared.Dtos.Response<CourseDto>.Fail("Course not found", 404);
             }
 
             course.Category = await _categoryCollection.Find<Category>(x => x.Id == course.CategoryId).FirstAsync();
 
-            return Response<CourseDto>.Success(_mapper.Map<CourseDto>(course), 200);
+            return Shared.Dtos.Response<CourseDto>.Success(_mapper.Map<CourseDto>(course), 200);
         }
 
         public async Task<Response<List<CourseDto>>> GetAllByUserIdAsync(string userId)
@@ -73,7 +77,7 @@ namespace MicroservicesPractice.Services.Catalog.Services.Concrete
                 courses = new();
             }
 
-            return Response<List<CourseDto>>.Success(_mapper.Map<List<CourseDto>>(courses), 200);
+            return Shared.Dtos.Response<List<CourseDto>>.Success(_mapper.Map<List<CourseDto>>(courses), 200);
         }
 
         public async Task<Response<CourseDto>> CreateAsync(CourseCreateDto courseCreateDto)
@@ -83,7 +87,7 @@ namespace MicroservicesPractice.Services.Catalog.Services.Concrete
             newCourse.CreatedTime = DateTime.Now;
             await _courseCollection.InsertOneAsync(newCourse);
 
-            return Response<CourseDto>.Success(_mapper.Map<CourseDto>(newCourse), 200);
+            return Shared.Dtos.Response<CourseDto>.Success(_mapper.Map<CourseDto>(newCourse), 200);
         }
 
         public async Task<Response<NoContent>> UpdateAsync(CourseUpdateDto courseUpdateDto)
@@ -94,10 +98,16 @@ namespace MicroservicesPractice.Services.Catalog.Services.Concrete
 
             if (result == null)
             {
-                return Response<NoContent>.Fail("Course not found", 404);
+                return Shared.Dtos.Response<NoContent>.Fail("Course not found", 404);
             }
 
-            return Response<NoContent>.Success(204);
+            await _publishEndpoint.Publish<CourseNameChangedEvent>(new CourseNameChangedEvent()
+            {
+                CourseId = updateCourse.Id,
+                UpdatedName = courseUpdateDto.Name
+            });
+
+            return Shared.Dtos.Response<NoContent>.Success(204);
         }
 
         public async Task<Response<NoContent>> DeleteAsync(string id)
@@ -106,11 +116,11 @@ namespace MicroservicesPractice.Services.Catalog.Services.Concrete
 
             if (result.DeletedCount > 0)
             {
-                return Response<NoContent>.Success(204);
+                return Shared.Dtos.Response<NoContent>.Success(204);
             }
             else
             {
-                return Response<NoContent>.Fail("Course not found", 404);
+                return Shared.Dtos.Response<NoContent>.Fail("Course not found", 404);
             }
         }
     }

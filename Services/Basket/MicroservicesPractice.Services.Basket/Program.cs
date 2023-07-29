@@ -1,4 +1,6 @@
 
+using MassTransit;
+using MicroservicesPractice.Services.Basket.Consumers;
 using MicroservicesPractice.Services.Basket.Services.Abstract;
 using MicroservicesPractice.Services.Basket.Services.Concrete;
 using MicroservicesPractice.Services.Basket.Settings;
@@ -17,6 +19,26 @@ namespace MicroservicesPractice.Services.Basket
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddMassTransit(x =>
+            {
+                x.AddConsumer<CourseNameChangedEventConsumer>();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    // Default RMQ port: 5672
+                    cfg.Host(builder.Configuration["RabbitMQUrl"], "/", host =>
+                    {
+                        host.Username("guest");
+                        host.Password("guest");
+                    });  
+
+                    cfg.ReceiveEndpoint("course-name-changed-event-basket-service", e =>
+                    {
+                        e.ConfigureConsumer<CourseNameChangedEventConsumer>(context);
+                    });
+                });
+            });
 
             var requireAuthorizePolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 

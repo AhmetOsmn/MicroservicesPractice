@@ -20,6 +20,31 @@ namespace MicroservicesPractice.Services.Order.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddMassTransit(x =>
+            {
+                x.AddConsumer<CreateOrderMessageCommandConsumer>();
+                x.AddConsumer<CourseNameChangedEventConsumer>();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    // Default RMQ port: 5672
+                    cfg.Host(builder.Configuration["RabbitMQUrl"], "/", host =>
+                    {
+                        host.Username("guest");
+                        host.Password("guest");
+                    });
+
+                    cfg.ReceiveEndpoint("create-order-service", e =>
+                    {
+                        e.ConfigureConsumer<CreateOrderMessageCommandConsumer>(context);
+                    });
+
+                    cfg.ReceiveEndpoint("course-name-changed-event-order-service", e =>
+                    {
+                        e.ConfigureConsumer<CourseNameChangedEventConsumer>(context);
+                    });
+                });
+            });
 
             var requireAuthorizePolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 
@@ -42,27 +67,7 @@ namespace MicroservicesPractice.Services.Order.API
             builder.Services.AddEndpointsApiExplorer();
 
             builder.Services.AddSwaggerGen();
-
-            builder.Services.AddMassTransit(x =>
-            {
-                x.AddConsumer<CreateOrderMessageCommandConsumer>();
-
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    // Default RMQ port: 5672
-                    cfg.Host(builder.Configuration["RabbitMQUrl"], "/", host =>
-                    {
-                        host.Username("guest");
-                        host.Password("guest");
-                    });
-
-                    cfg.ReceiveEndpoint("create-order-service", e =>
-                    {
-                        e.ConfigureConsumer<CreateOrderMessageCommandConsumer>(context);
-                    });
-                });
-            });
-
+          
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

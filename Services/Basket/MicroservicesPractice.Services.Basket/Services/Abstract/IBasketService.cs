@@ -8,5 +8,6 @@ namespace MicroservicesPractice.Services.Basket.Services.Abstract
         Task<Response<BasketDto>> GetBasket(string userId);
         Task<Response<bool>> SaveOrUpdate(BasketDto basketDto);
         Task<Response<bool>> Delete(string userId);
+        Task UpdateCourseNames(string courseId, string updatedCourseName);
     }
 }

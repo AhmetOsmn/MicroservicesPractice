@@ -1,3 +1,4 @@
+using MassTransit;
 using MicroservicesPractice.Services.Catalog.Services.Abstract;
 using MicroservicesPractice.Services.Catalog.Services.Concrete;
 using MicroservicesPractice.Services.Catalog.Settings;
@@ -14,6 +15,19 @@ namespace MicroservicesPractice.Services.Catalog
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    // Default RMQ port: 5672
+                    cfg.Host(builder.Configuration["RabbitMQUrl"], "/", host =>
+                    {
+                        host.Username("guest");
+                        host.Password("guest");
+                    });
+                });
+            });
 
             builder.Services.AddControllers(opt =>
             {

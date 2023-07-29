@@ -7,13 +7,13 @@
             _basketItems = new List<BasketItemViewModel>();
         }
 
-        private List<BasketItemViewModel>? _basketItems;
+        private List<BasketItemViewModel> _basketItems;
         
         public string UserId { get; set; } = null!;
         
         public string? DiscountCode { get; set; }
         
-        public List<BasketItemViewModel>? BasketItems
+        public List<BasketItemViewModel> BasketItems
         {
             get
             {

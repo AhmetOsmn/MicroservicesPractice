@@ -9,6 +9,8 @@
         public ServiceApi PhotoStock { get; set; } = null!;
         public ServiceApi Basket { get; set; } = null!;
         public ServiceApi Discount { get; set; } = null!;
+        public ServiceApi Payment { get; set; } = null!;
+        public ServiceApi Order { get; set; } = null!;
     }
 
     public class ServiceApi

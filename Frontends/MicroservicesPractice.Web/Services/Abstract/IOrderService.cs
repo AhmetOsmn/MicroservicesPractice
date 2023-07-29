@@ -8,7 +8,7 @@ namespace MicroservicesPractice.Web.Services.Abstract
         Task<OrderCreatedViewModel?> CreateOrder(CheckoutInfoInput checkoutInfoInput);
 
         // async
-        Task SuspendOrder(CheckoutInfoInput checkoutInfoInput);
+        Task<OrderSuspendViewModel> SuspendOrder(CheckoutInfoInput checkoutInfoInput);
         
         Task<List<OrderViewModel>> GetOrder();
     }

@@ -1,4 +1,5 @@
 
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -19,6 +20,19 @@ namespace MicroservicesPractice.Services.FakePayment
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    // Default RMQ port: 5672
+                    cfg.Host(builder.Configuration["RabbitMQUrl"],"/", host =>
+                    {
+                        host.Username("guest");
+                        host.Password("guest");
+                    });
+                });
+            });
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 

@@ -1,76 +1,24 @@
 services:
     catalogdb:
-        container_name: microservices-practice-catalogdb
         image: mongo:latest
-        environment:
-        - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        - GOSU_VERSION=1.16
-        - JSYAML_VERSION=3.13.1
-        - MONGO_PACKAGE=mongodb-org
-        - MONGO_REPO=repo.mongodb.org
-        - MONGO_MAJOR=6.0
-        - MONGO_VERSION=6.0.5
-        - HOME=/data/db
-        ports:
-            - "27017:27017"
-        volumes:
-            - mongodb_db:/data/db
-            - mongodb_configdb:/data/configdb
-            
-    identitydb:
-        container_name: microservices-practice-identitydb
-        image: mcr.microsoft.com/mssql/server:2019-latest
-        environment:
-        - ACCEPT_EULA=Y
-        - SA_PASSWORD=Password12*
-        - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        ports:
-            - "1433:1433"
 
+    identitydb:
+        image: mcr.microsoft.com/mssql/server:2019-latest
             
     basketdb:
-        container_name: microservices-practice-basketdb 
         image: redis:latest
-        environment:
-        - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        - GOSU_VERSION=1.16
-        - REDIS_VERSION=7.0.11
-        - REDIS_DOWNLOAD_URL=http://download.redis.io/releases/redis-7.0.11.tar.gz
-        - REDIS_DOWNLOAD_SHA=ce250d1fba042c613de38a15d40889b78f7cb6d5461a27e35017ba39b07221e3
-        ports:
-            - "6379:6379"
-        volumes:
-            - redis_db:/data
-    
+           
     discountdb:
-        container_name: microservices-practice-discountdb 
         image: postgres:latest
-        environment:
-        - POSTGRES_USER=admin
-        - POSTGRES_PASSWORD=Password12*
-        - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/15/bin
-        - GOSU_VERSION=1.16
-        - LANG=en_US.utf8
-        - PG_MAJOR=15
-        - PG_VERSION=15.2-1.pgdg110+1
-        - PGDATA=/var/lib/postgresql/data
-        ports:
-            - "5432:5432"
-        volumes:
-            - postgre_db:/var/lib/postgresql/data
-    
+           
     orderdb:
-        container_name: microservices-practice-orderdb
         image: mcr.microsoft.com/mssql/server:2019-latest
-        environment:
-        - ACCEPT_EULA=Y
-        - SA_PASSWORD=Password12*
-        - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        ports:
-            - "1443:1433"
-            
+                 
+    rabbitmq:
+        image: rabbitmq:3.12.2-management
+
 volumes:
-  mongodb_db:
-  mongodb_configdb:
-  redis_db:
-  postgre_db:
+  catalogdb_volume:
+  discountdb_volume:
+  identitydb_volume:
+  orderdb_volume:

@@ -1,0 +1,56 @@
+services:
+    catalogdb:
+        container_name: microservices-practice-catalogdb
+        restart: always
+        ports: 
+          - "27017:27017"
+        volumes:
+          - catalogdb_volume:/data/db
+
+    identitydb:
+        container_name: microservices-practice-identitydb
+        restart: always
+        ports: 
+          - "1433:1433"
+        volumes:
+          - identitydb_volume:/var/opt/mssql/data
+        environment:
+          - ACCEPT_EULA=Y
+          - SA_PASSWORD=Password12*
+            
+    basketdb:
+        container_name: microservices-practice-basketdb
+        restart: always
+        ports: 
+          - "6379:6379"
+    
+    discountdb:
+        container_name: microservices-practice-discountdb
+        restart: always
+        ports: 
+          - "5432:5432"
+        volumes:
+          - discountdb_volume:/var/lib/postgresql/data
+        environment:
+          - POSTGRES_USER=admin
+          - POSTGRES_PASSWORD=Password12*
+          - POSTGRES_DB=discountdb
+    
+    orderdb:
+        container_name: microservices-practice-orderdb
+        restart: always
+        ports: 
+          - "1443:1433"
+        volumes:
+          - orderdb_volume:/var/opt/mssql/data
+        environment:
+          - ACCEPT_EULA=Y
+          - SA_PASSWORD=Password12*
+            
+    rabbitmq:
+        container_name: microservices-practice-rabbitmq
+        restart: always
+        ports:
+          - "5672:5672"
+          - "15672:15672"
+  

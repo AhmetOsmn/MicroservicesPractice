@@ -6,12 +6,13 @@ using MicroservicesPractice.Services.Catalog.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Options;
+using System.Reflection;
 
 namespace MicroservicesPractice.Services.Catalog
 {
     public static class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +40,7 @@ namespace MicroservicesPractice.Services.Catalog
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddAutoMapper(typeof(Program));
+            builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ICourseService, CourseService>();
@@ -62,16 +63,17 @@ namespace MicroservicesPractice.Services.Catalog
 
                 var categoryService = serviceProvider.GetRequiredService<ICategoryService>();
 
-                if (!categoryService.GetAllAsync().Result.Data.Any())
+                if (!(await categoryService.GetAllAsync()).Data.Any())
                 {
-                    categoryService.CreateAsync(new CategoryCreateDto { Name = "Asp.net Core Kursu" }).Wait();
-                    categoryService.CreateAsync(new CategoryCreateDto { Name = "Asp.net Core API Kursu" }).Wait();
+                    await categoryService.CreateAsync(new CategoryCreateDto { Name = "Asp.net Core Kursu" });
+                    await categoryService.CreateAsync(new CategoryCreateDto { Name = "Asp.net Core API Kursu" });
                 }
             }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }

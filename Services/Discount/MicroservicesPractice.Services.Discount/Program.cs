@@ -15,7 +15,6 @@ namespace MicroservicesPractice.Services.Discount
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
             var requireAuthorizePolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 
             // Add services to the container.
@@ -24,6 +23,8 @@ namespace MicroservicesPractice.Services.Discount
             builder.Services.AddEndpointsApiExplorer();
 
             builder.Services.AddSwaggerGen();
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {

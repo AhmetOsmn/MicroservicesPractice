@@ -1,4 +1,5 @@
 using MassTransit;
+using MicroservicesPractice.Services.Catalog.Dtos;
 using MicroservicesPractice.Services.Catalog.Services.Abstract;
 using MicroservicesPractice.Services.Catalog.Services.Concrete;
 using MicroservicesPractice.Services.Catalog.Settings;
@@ -52,8 +53,21 @@ namespace MicroservicesPractice.Services.Catalog
                 options.Audience = "resource_catalog";
                 options.RequireHttpsMetadata = false;
             });
-
+         
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
+
+                var categoryService = serviceProvider.GetRequiredService<ICategoryService>();
+
+                if (!categoryService.GetAllAsync().Result.Data.Any())
+                {
+                    categoryService.CreateAsync(new CategoryCreateDto { Name = "Asp.net Core Kursu" }).Wait();
+                    categoryService.CreateAsync(new CategoryCreateDto { Name = "Asp.net Core API Kursu" }).Wait();
+                }
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
